@@ -1,0 +1,24 @@
+# 编译产物
+scripts/ocrbin
+__pycache__/
+*.pyc
+*.pyo
+
+# 运行时产物
+work/
+*.wav
+*.m4a
+*.mp4
+*.webm
+*.part
+*.json.tmp
+output/
+
+# 环境
+.venv/
+venv/
+.env
+
+# 系统
+.DS_Store
+Thumbs.db
