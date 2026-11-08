@@ -138,11 +138,56 @@ table.xt tr:last-child td{border-bottom:none;}
 .xhs-tags{padding:0 24px 22px;display:flex;flex-wrap:wrap;gap:7px;}
 .tag{font-size:12.5px;color:var(--blue);background:var(--blue-bg);border-radius:5px;padding:3px 9px;}
 footer{margin-top:64px;padding-top:26px;border-top:1px solid var(--line);font-size:12.5px;color:var(--faint);line-height:1.85;}
+
+/* ===== 承重概念深拆 ===== */
+.xray{background:#1C1A17;border-radius:16px;padding:0;overflow:hidden;color:#EDE8DF;}
+.xray-top{padding:26px 32px 22px;border-bottom:1px solid #33302B;
+  background:linear-gradient(160deg,#242019,#1C1A17);}
+.xray-kicker{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:#C79A5B;font-weight:700;margin-bottom:12px;}
+.xray-top h3{margin:0 0 10px;font-size:24px;font-weight:670;color:#FFF9EE;line-height:1.35;letter-spacing:-.01em;}
+.xray-top .sub{font-size:14.5px;color:#A69D8E;margin:0;line-height:1.65;max-width:none;}
+.xray-body{padding:8px 32px 30px;}
+.step{padding:24px 0;border-bottom:1px solid #2C2925;}
+.step:last-child{border-bottom:none;padding-bottom:6px;}
+.step-no{display:inline-flex;align-items:center;justify-content:center;
+  width:23px;height:23px;border-radius:50%;background:#C79A5B;color:#1C1A17;
+  font-size:12px;font-weight:750;margin-right:9px;vertical-align:middle;
+  font-variant-numeric:tabular-nums;}
+.step h4{display:inline;font-size:16.5px;font-weight:650;color:#FFF3E0;vertical-align:middle;letter-spacing:0;}
+.step p{margin:13px 0 0;font-size:15px;line-height:1.85;color:#C9C1B4;}
+.step p:first-of-type{margin-top:14px;}
+.step strong{color:#FFF3E0;font-weight:650;}
+.step em{font-style:normal;color:#F5C87A;background:rgba(199,154,91,.14);
+  padding:1px 4px;border-radius:3px;}
+.step code{font-family:ui-monospace,Menlo,monospace;font-size:13px;
+  background:#2C2925;padding:2px 6px;border-radius:4px;color:#F0C98C;}
+.step ul{margin:12px 0 0;padding-left:20px;}
+.step li{margin-bottom:9px;font-size:14.5px;line-height:1.8;color:#C9C1B4;}
+.step li:last-child{margin-bottom:0;}
+.calc{background:#12100E;border:1px solid #3A3429;border-radius:10px;
+  padding:16px 18px;margin:15px 0 0;font-size:14px;line-height:1.9;
+  color:#D8CFC0;font-variant-numeric:tabular-nums;}
+.calc .ct{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:#8A8175;font-weight:700;margin-bottom:9px;}
+.calc b{color:#F5C87A;font-weight:680;}
+.limit{margin:14px 0 0;padding:14px 16px;background:#241C16;
+  border-left:3px solid #B4530A;border-radius:0 8px 8px 0;}
+.limit .lt{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:#D08A4A;font-weight:700;margin-bottom:7px;}
+.limit p{margin:0;font-size:14px;line-height:1.8;color:#C9B8A6;}
+.oneline{margin:26px 0 0;padding:20px 24px;background:#C79A5B;border-radius:10px;
+  color:#1C1A17;font-size:16px;line-height:1.7;font-weight:600;}
+.oneline .ol{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:#6B4E20;font-weight:750;margin-bottom:8px;}
+
 @media (max-width:820px){
   .wrap{padding:0 18px 80px;}
   h1{font-size:25px;}
   header{padding:40px 0 28px;}
   .terms,.facts{grid-template-columns:1fr;}
+  .xray-top,.xray-body{padding-left:20px;padding-right:20px;}
+  .xray-top h3{font-size:20px;}
   .duo{grid-template-columns:1fr;}
   .col-src{border-right:none;border-bottom:1px solid var(--line2);}
   .lead,.crit{padding:22px;}
@@ -264,6 +309,45 @@ def render(segdata, content):
                 P.append(f"<span class='at'>{esc(t['at'])}</span>")
             P.append(f"</div><div class='d'>{inline(t.get('def',''))}</div></div>")
         P.append("</div></section>")
+
+    # ===== 承重概念深拆 =====
+    xr = content.get("concept")
+    if xr:
+        P.append("<section><h2>承重概念深拆</h2><div class='xray'>")
+        P.append("<div class='xray-top'>")
+        P.append(f"<div class='xray-kicker'>{esc(xr.get('kicker','为什么这个概念值得单独拆'))}</div>")
+        P.append(f"<h3>{esc(xr.get('name',''))}</h3>")
+        if xr.get("sub"):
+            P.append(f"<p class='sub'>{inline(xr['sub'])}</p>")
+        P.append("</div><div class='xray-body'>")
+
+        for i, st in enumerate(xr.get("steps", []), 1):
+            P.append("<div class='step'>")
+            P.append(f"<span class='step-no'>{i}</span><h4>{esc(st.get('head',''))}</h4>")
+            for para in st.get("paras", []):
+                P.append(f"<p>{inline(para)}</p>")
+            if st.get("calc"):
+                c = st["calc"]
+                P.append("<div class='calc'>")
+                P.append(f"<div class='ct'>{esc(c.get('title','算一遍'))}</div>")
+                for line in c.get("lines", []):
+                    P.append(f"<div>{inline(line)}</div>")
+                P.append("</div>")
+            if st.get("items"):
+                P.append("<ul>")
+                for it in st["items"]:
+                    P.append(f"<li>{inline(it)}</li>")
+                P.append("</ul>")
+            if st.get("limit"):
+                P.append("<div class='limit'>")
+                P.append(f"<div class='lt'>{esc(st['limit'].get('label','失效边界'))}</div>")
+                P.append(f"<p>{inline(st['limit'].get('text',''))}</p></div>")
+            P.append("</div>")
+
+        if xr.get("oneline"):
+            P.append("<div class='oneline'><span class='ol'>一句话定位</span>"
+                     f"{inline(xr['oneline'])}</div>")
+        P.append("</div></div></section>")
 
     # segments
     P.append(f"<section><h2>全片逐段对照</h2>")
